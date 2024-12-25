@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Number Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      #generated-number {
+        font-size: 24px;
+        margin-top: 20px;
+        height: 30px;
+      }
+      #number-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 0;
+        margin-top: 20px;
+      }
+      #number-list li {
+        font-size: 18px;
+        list-style: none;
+        padding: 5px 10px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      input {
+        margin: 10px;
+        padding: 5px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Random Number Generator</h1>
+    <p>Click the button to generate a random number between 1 and 90.</p>
+
+    <button id="generate-button">Generate Number</button>
+    <button id="reset-button">Reset</button>
+    <p id="generated-number">Number:</p>
+
+    <h2>Generated Numbers:</h2>
+    <ul id="number-list"></ul>
+
+    <h2>Check Numbers:</h2>
+    <p>Enter 5 numbers separated by commas (e.g., 12,23,45,67,89):</p>
+    <input type="text" id="check-input" placeholder="Enter numbers" />
+    <button id="check-button">Check</button>
+    <p id="check-result"></p>
+
+    <script>
+      const generatedNumbers = new Set();
+
+      document
+        .getElementById("generate-button")
+        .addEventListener("click", () => {
+          if (generatedNumbers.size >= 90) {
+            alert("All numbers from 1 to 90 have been generated!");
+            return;
+          }
+
+          const displayElement = document.getElementById("generated-number");
+          let counter = 0;
+          const interval = setInterval(() => {
+            const tempNumber = Math.floor(Math.random() * 90) + 1;
+            displayElement.innerText = `Number: ${tempNumber}`;
+            counter++;
+            if (counter === 10) {
+              clearInterval(interval);
+
+              let number;
+              do {
+                number = Math.floor(Math.random() * 90) + 1;
+              } while (generatedNumbers.has(number));
+
+              generatedNumbers.add(number);
+              displayElement.innerText = `Number: ${number}`;
+
+              const listItem = document.createElement("li");
+              listItem.textContent = number;
+              document.getElementById("number-list").appendChild(listItem);
+            }
+          }, 100);
+        });
+
+      document.getElementById("reset-button").addEventListener("click", () => {
+        generatedNumbers.clear();
+        document.getElementById("generated-number").innerText = "Number: ";
+        document.getElementById("number-list").innerHTML = "";
+        alert("The list has been reset.");
+      });
+
+      document.getElementById("check-button").addEventListener("click", () => {
+        const input = document.getElementById("check-input").value;
+        const numbersToCheck = input
+          .split(",")
+          .map((num) => parseInt(num.trim()));
+        const foundNumbers = numbersToCheck.filter((num) =>
+          generatedNumbers.has(num)
+        );
+
+        if (foundNumbers.length > 0) {
+          document.getElementById(
+            "check-result"
+          ).innerText = `Found in list: ${foundNumbers.join(", ")}`;
+        } else {
+          document.getElementById("check-result").innerText =
+            "None of the numbers are in the list.";
+        }
+      });
+    </script>
+  </body>
+</html>
